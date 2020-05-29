@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>To Do List</title>
+</head>
+<body>
+    <header>To do List</header>
+    <div class="cont">
+        <div class="sidebar">
+            <ul class="filters">
+                <li class="filter allTasks">
+                    <img src="icon-todo.png" alt="" class="icons">
+                    <span class="list-name">All Tasks</span>
+                    <span class="tasks-count"></span>
+                </li>
+                <li class="filter today">
+                    <img src="icon-todo.png" alt="" class="icons">
+                    <span class="list-name">Today</span>
+                    <span class="tasks-count"></span>   
+                </li>
+                <li class="filter next-week">
+                    <img src="icon-todo.png" alt="" class="icons">
+                    <span class="list-name">Next Week</span>
+                    <span class="tasks-count"></span>
+                </li>
+                <li class="filter important">
+                    <img src="icon-todo.png" alt="" class="icons">
+                    <span class="list-name">Important</span>
+                    <span class="tasks-count"></span>
+                </li>
+            </ul>
+            <ul class="lists"></ul>
+            <form id="add-list-form">
+                <input id="add-list-input" type="text" placeholder="+ Add List">
+                <input class="hide" type="submit" value="Add">
+            </form>    
+
+        </div>
+        <div id="tasks-view">
+            <div class="todo-header">
+                <div id="todo-title"></div>
+                <div id="todo-counter"></div>
+            </div>
+            <div class="todo-body">
+                <div id="todo-tasks" class="tasks"></div>
+                <div class="new-task">
+                    <input id="add-new-task-button" class="btn btn-primary" type="button" data-toggle="modal" data-target="#addModal" value="Add New Task">
+                </div>
+                <div class="deleters">
+                    <button id="delete-task-button" class="btn btn-success">Delete completed tasks</button>
+                    <button id="delete-list-button" class="btn btn-danger">Delete List</button>
+                </div>
+            </div> 
+        </div>
+    </div>
+
+    <div class="modal fade" id="addModal" data-backdrop="false" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Add New List</h3>
+                </div>
+                <div class="modal-body">
+                    <form id="add-tasks">
+                        <input class="modal-inputs" type="text" placeholder="Title" id="new-task-title">
+                        <textarea class="modal-inputs" placeholder="Description..." id="new-task-description"></textarea>
+                        <input type="date" id="date-picker" class="modal-inputs">
+                    </form> 
+                </div>
+                <div class="modal-footer">
+                    <input form="add-tasks" id="add-task-button" class="btn btn-primary" type="submit" value="Add Task">
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <template id="task-template">
+        <div class="task">
+            <div class="task-header">
+                <div class="checkbox-and-title">
+                    <input class="check" type="checkbox">
+                    <label class="task-title"></label>
+                </div>
+                <div>
+                    <span class="edit-task">Edit</span>
+                    <span id="close-x">&times;</span>
+                </div>
+            </div>
+            <div class="task-description"></div>
+        </div>
+    </template>
+
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.hide {
+    display: none !important;
+}
+
+header {
+    text-align: center;
+    height: 50px;
+    font-weight: bolder;
+    font-size: xx-large;
+    background-color: rgb(68, 145, 218);
+}
+
+.cont  {
+    display: grid;
+    width: 70vw;
+    gap: 10px;
+    margin: 10px;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: 80vh;
+    margin-left: 15vw;
+}
+
+.filters {
+    padding: 0;
+}
+
+.icons {
+    height: 20px;
+    width: auto;
+    padding-right: 5px;
+}
+
+.filters li {
+    list-style: none;
+}
+
+.list-name:hover {
+    cursor: pointer;
+}
+
+.list {
+    display: flex;
+    align-items: center;
+}
+
+.list:hover {
+    cursor: pointer;
+}
+
+.tasks-view {
+    border: solid;
+}
+
+.sidebar {
+    border: solid;
+}
+
+#add-list-form {
+    display: flex;
+}
+
+.selected {
+    font-weight: bolder;
+    color: red;
+}
+
+.todo-header {
+    display: flex;
+    background-color:rgb(163, 181, 199);
+    justify-content: space-between;
+    border-radius: 5px;
+    padding: 6px;
+}
+
+#tasks-view {
+    max-width: 40vw;
+}
+
+#todo-counter {
+    font-size: small;
+    align-self: center;
+}
+
+#todo-title {
+    font-size: x-large;
+}
+
+.task {
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 5%;
+    padding: 10px;
+}
+
+.task-description {
+    width: 100%;
+}
+
+input[type=checkbox]:checked + label.task-title{
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+
+input {outline: none;}
+
+.task-title {
+    margin: 2px 0 4px 6px;
+}
+
+.task-header {
+    width: 100%;
+    border-bottom: solid black;
+    border-width: thin;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.checkbox-and-title {
+    display: flex;
+}
+
+.new-task {
+    display: flex;
+    justify-content: flex-start;
+    margin: 5px;
+}
+
+.deleters {
+    display: flex;
+    justify-content: flex-start;
+    margin: 5px;
+    flex-wrap: wrap;
+}
+
+.deleters button {
+    margin: 5px 5px 5px 0;
+}
+
+
+.modal-inputs {
+    border-radius: 4px;
+    margin: 6px;
+    border: lightgray inset thin;
+}
+
+#add-tasks {
+    display: flex;
+    flex-direction: column;
+}
+
+#new-task-description {
+    resize: none;
+}
+
+#close-x {
+    font-size: large;
+    margin-left: 10px;
+}
+
+#close-x:hover, .edit-task:hover {
+    cursor: pointer;
+}
+
+.edit-task {
+    color: green;
+}
