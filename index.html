@@ -37,7 +37,7 @@
             <ul class="lists"></ul>
             <form id="add-list-form">
                 <input id="add-list-input" type="text" placeholder="+ Add List">
-                <input class="hide" type="submit" value="Add">
+                <input class="btn btn-light add-list-button" type="submit" value="Add">
             </form>    
 
         </div>
@@ -63,7 +63,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title">Add New List</h3>
+                    <h3 class="modal-title">Add New Task</h3>
                 </div>
                 <div class="modal-body">
                     <form id="add-tasks">
@@ -81,6 +81,28 @@
         </div>
     </div>
 
+    <div class="modal fade" id="editModal" data-backdrop="false" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">Edit Task</h3>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-tasks">
+                        <input class="modal-inputs" type="text" placeholder="Title" id="edit-task-title">
+                        <textarea class="modal-inputs" placeholder="Description..." id="edit-task-description"></textarea>
+                        <input type="date" id="edit-date-picker" class="modal-inputs">
+                    </form> 
+                </div>
+                <div class="modal-footer">
+                    <input id="edit-task-button" data-dismiss="modal" class="btn btn-primary" type="submit" value="Edit Task">
+                    <button class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <template id="task-template">
         <div class="task">
             <div class="task-header">
@@ -88,9 +110,10 @@
                     <input class="check" type="checkbox">
                     <label class="task-title"></label>
                 </div>
-                <div>
-                    <span class="edit-task">Edit</span>
-                    <span id="close-x">&times;</span>
+                <div class="date-edit-delete">
+                    <div class="due-date"></div>
+                    <span data-toggle="modal" data-target="#editModal" class="edit-task">Edit</span>
+                    <span title="Delete" id="close-x">&times;</span>
                 </div>
             </div>
             <div class="task-description"></div>

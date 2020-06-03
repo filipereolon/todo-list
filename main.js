@@ -12,6 +12,12 @@ const addTaskForm = document.getElementById('add-tasks');
 const newTaskTitle = document.getElementById('new-task-title');
 const newTaskDescription = document.getElementById('new-task-description');
 const newTaskDate = document.getElementById('date-picker');
+const editTaskDescription = document.getElementById('edit-task-description');
+const editTaskDate = document.getElementById('edit-date-picker');
+const editTaskTitle = document.getElementById('edit-task-title');
+const editTaskForm = document.getElementById('edit-tasks');
+const editTaskButton = document.getElementById('edit-task-button');
+
 
 const LOCAL_STORAGE_LIST_KEY = 'task.lists';
 const LOCAL_STORAGE_SELECTED_LIST_ID_KEY = 'task.selectedListId';
@@ -24,6 +30,14 @@ let selectedTask;
 
 loadList();
 
+
+function renderBadges() {
+    lists.forEach(list => {
+        selectedListId = list.id;
+        tasksCounter(list);
+    })
+}
+
 function selectList() {
     let listItems = document.querySelectorAll('.list');
         listItems.forEach(list => {
@@ -31,18 +45,54 @@ function selectList() {
     })
 }
 
+editTaskForm.addEventListener('submit', e => {
+    e.preventDefault();
+})
+
 tasksContainer.addEventListener('click', e => {
     if (e.target.tagName.toLowerCase() === 'input') {
         selectedTaskId = e.target.id;
         selectedTask = selectedList.tasks.find(task => task.id === selectedTaskId)
+        let selectedDescription = document.getElementById(`${selectedTaskId}a`);
         if (selectedTask.complete) {
             selectedTask.complete = false;
+            selectedDescription.classList.remove('scratched');
         } else {
             selectedTask.complete = true;
+            selectedDescription.classList.add('scratched');
         }
         save();
         tasksCounter(selectedList);
     }
+
+    if (e.target.tagName.toLowerCase() === 'span') {
+        if (e.target.id === 'close-x') {
+            selectedList.tasks = selectedList.tasks.filter(task => task.id !== e.target.dataset.typeId);
+            clearElement(tasksContainer);
+            renderTasks(selectedList);
+            tasksCounter(selectedList);
+            save();
+        }
+        if (e.target.classList.contains('edit-task')) {
+            selectedTaskId = e.target.dataset.typeId;
+            selectedTask = selectedList.tasks.find(task => task.id === selectedTaskId);
+            editTaskDate.value = selectedTask.date;
+            editTaskDescription.value = selectedTask.description;
+            editTaskTitle.value = selectedTask.name;
+        }
+    }
+})
+
+editTaskButton.addEventListener('click', () => {
+    selectedTask.date = editTaskDate.value;
+    selectedTask.description = editTaskDescription.value;
+    selectedTask.complete = false;
+    editTaskTitle.value.trim() === '' ? false : selectedTask.name = editTaskTitle.value;
+    
+    clearElement(tasksContainer);
+    renderTasks(selectedList);
+    tasksCounter(selectedList);
+    save();
 })
 
 listContainer.addEventListener('click', e => {
@@ -53,6 +103,7 @@ listContainer.addEventListener('click', e => {
         save();
         clearElement(tasksContainer);
         renderTasks(selectedList);
+        scratchDescription();
     }
 })
 
@@ -62,9 +113,15 @@ listForm.addEventListener('submit', e => {
     if(listName == null || listName === '') return
     const list = createList(listName);
     lists.push(list);
+    selectedListId = list.id;
+    listInput.value = null;
     save();
     addList(list);
-    listInput.value = null;
+    renderBadges();
+    showList();
+    clearElement(tasksContainer);
+    renderTasks(list);
+    selectList();
 })
 
 addTaskForm.addEventListener('submit', e => {
@@ -79,14 +136,10 @@ addTaskForm.addEventListener('submit', e => {
       
 })
 
-function teste() {
-    showList();
-    clearElement(tasksContainer);
-    renderTasks(selectedList);
-}
-
 function createTask(name, description) {
-    return {id: Date.now().toString(), name, description, complete: false, date: newTaskDate.value}
+    let splitDate = newTaskDate.value.split('-');
+    let showDate = `${splitDate[2]}/` + `${splitDate[1]}/` + `${splitDate[0]}`;
+    return {id: Date.now().toString(), name, description, complete: false, date: newTaskDate.value, dueDate: showDate}
 }
 
 function createList(name) {
@@ -104,11 +157,21 @@ function loadList() {
     renderTasks(selectedList);
     showList();
     selectList();
+    renderBadges();
+    scratchDescription();
+}
+
+function scratchDescription() {
+    selectedList.tasks.forEach(task => {
+        let selectedDescription = document.getElementById(`${task.id}a`)
+        task.complete === false ? selectedDescription.classList.remove('scratched') : selectedDescription.classList.add('scratched');
+    }) 
 }
 
 function reloadList(e) {
     clearElement(e);
-    loadList();
+    lists.forEach(addList);
+    renderBadges();
 }
 
 function showList() {
@@ -125,8 +188,15 @@ function renderTasks(selectedList) {
         checkbox.checked = task.complete;
         const taskTitle = taskElement.querySelector('.task-title');
         const taskDescription = taskElement.querySelector('.task-description');
+        const taskDueDate = taskElement.querySelector('.due-date');
+        const taskEditButton = taskElement.querySelector('.edit-task');
+        const deleteTask = taskElement.getElementById('close-x');
+        deleteTask.dataset.typeId = task.id
+        taskEditButton.dataset.typeId = task.id;
+        taskDueDate.append(task.dueDate);
         taskTitle.htmlFor = task.id;
         taskTitle.append(task.name);
+        taskDescription.id = task.id + 'a';
         taskDescription.append(task.description);
         tasksContainer.appendChild(taskElement);
     })
@@ -137,19 +207,25 @@ function tasksCounter(selectedList) {
     const taskString = incomplete === 1 ? 'task' : 'tasks';
     incomplete === 0 ? incomplete = 'No': false;
     listCount.innerText = `${incomplete} incomplete ${taskString}`; 
+    const badgeElement = document.querySelector(`[data-sel-id="${selectedListId}"]`);
+    incomplete > 0 ?  badgeElement.innerText = `${incomplete}` : badgeElement.innerText = '0';
 }
 
 function addList(list) {
     const listElement = document.createElement('li');
+    const badgeElement = document.createElement('span');
+    badgeElement.dataset.selId = list.id;
     listElement.id = list.id;
     listElement.classList.add('list');
     listElement.innerText = list.name;
     listContainer.appendChild(listElement);
+    listElement.appendChild(badgeElement);
+    badgeElement.classList.add('badge');
+    badgeElement.classList.add('badge-info');
 }
 
 deleteListBtn.addEventListener('click', () => {
     lists = lists.filter(list => list.id !== selectedListId);
-    
     reloadList(listContainer);
     save();
 })
