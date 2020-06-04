@@ -122,6 +122,11 @@ input[type=checkbox]:checked + label.task-title{
 
 input {outline: none;}
 
+#edit-tasks input:focus, #edit-tasks textarea:focus, #add-tasks input:focus, #add-tasks textarea:focus {
+    outline: lightskyblue solid 1px;
+    box-shadow: 0 1px 4px;
+}
+
 .task-title {
     margin: 2px 0 4px 6px;
     font-size: large;
@@ -198,4 +203,5 @@ input {outline: none;}
 
 .date-edit-delete {
     display: flex;
+    margin-left: 4px;
 }

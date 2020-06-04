@@ -13,7 +13,7 @@
     <div class="cont">
         <div class="sidebar">
             <ul class="filters">
-                <li class="filter allTasks">
+                <li id="all-tasks" class="filter allTasks">
                     <img src="icon-todo.png" alt="" class="icons">
                     <span class="list-name">All Tasks</span>
                     <span class="tasks-count"></span>
@@ -49,10 +49,10 @@
             <div class="todo-body">
                 <div id="todo-tasks" class="tasks"></div>
                 <div class="new-task">
-                    <input id="add-new-task-button" class="btn btn-primary" type="button" data-toggle="modal" data-target="#addModal" value="Add New Task">
+                    <input id="add-new-task-button" class="btn btn-primary hide" type="button" data-toggle="modal" data-target="#addModal" value="Add New Task">
                 </div>
-                <div class="deleters">
-                    <button id="delete-task-button" class="btn btn-success">Delete completed tasks</button>
+                <div class="deleters hide">
+                    <button id="delete-complete-task-button" class="btn btn-success">Delete completed tasks</button>
                     <button id="delete-list-button" class="btn btn-danger">Delete List</button>
                 </div>
             </div> 

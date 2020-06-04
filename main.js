@@ -17,19 +17,21 @@ const editTaskDate = document.getElementById('edit-date-picker');
 const editTaskTitle = document.getElementById('edit-task-title');
 const editTaskForm = document.getElementById('edit-tasks');
 const editTaskButton = document.getElementById('edit-task-button');
-
+const deleteCompletetasks = document.getElementById('delete-complete-task-button');
+const allTasksFilter = document.getElementById('all-tasks');
+const deleters = document.querySelector('.deleters');
+const newTaskAddButton = document.getElementById('add-new-task-button');
 
 const LOCAL_STORAGE_LIST_KEY = 'task.lists';
 const LOCAL_STORAGE_SELECTED_LIST_ID_KEY = 'task.selectedListId';
 
 let lists = JSON.parse(localStorage.getItem(LOCAL_STORAGE_LIST_KEY)) || [];
 let selectedListId = localStorage.getItem(LOCAL_STORAGE_SELECTED_LIST_ID_KEY);
+
 let selectedList;
 let selectedTask;
 
-
-loadList();
-
+loadPage();
 
 function renderBadges() {
     lists.forEach(list => {
@@ -45,15 +47,27 @@ function selectList() {
     })
 }
 
+
+deleteCompletetasks.addEventListener('click', () => {
+    clearElement(tasksContainer);
+    selectedList.tasks = selectedList.tasks.filter(task => !task.complete);
+    renderTasks(selectedList);
+    renderBadges();
+    save();
+})
+
 editTaskForm.addEventListener('submit', e => {
     e.preventDefault();
 })
 
 tasksContainer.addEventListener('click', e => {
     if (e.target.tagName.toLowerCase() === 'input') {
+        selectedListId = e.target.dataset.listId;
+        selectedList = lists.find(list => list.id === selectedListId);
+        
         selectedTaskId = e.target.id;
         selectedTask = selectedList.tasks.find(task => task.id === selectedTaskId)
-        let selectedDescription = document.getElementById(`${selectedTaskId}a`);
+        let selectedDescription = document.querySelector(`[data-description-task-id = "${selectedTaskId}"]`);
         if (selectedTask.complete) {
             selectedTask.complete = false;
             selectedDescription.classList.remove('scratched');
@@ -63,18 +77,19 @@ tasksContainer.addEventListener('click', e => {
         }
         save();
         tasksCounter(selectedList);
+        renderBadges();
     }
 
     if (e.target.tagName.toLowerCase() === 'span') {
         if (e.target.id === 'close-x') {
-            selectedList.tasks = selectedList.tasks.filter(task => task.id !== e.target.dataset.typeId);
+            selectedList.tasks = selectedList.tasks.filter(task => task.id !== e.target.dataset.taskId);
             clearElement(tasksContainer);
             renderTasks(selectedList);
             tasksCounter(selectedList);
             save();
         }
         if (e.target.classList.contains('edit-task')) {
-            selectedTaskId = e.target.dataset.typeId;
+            selectedTaskId = e.target.dataset.taskId;
             selectedTask = selectedList.tasks.find(task => task.id === selectedTaskId);
             editTaskDate.value = selectedTask.date;
             editTaskDescription.value = selectedTask.description;
@@ -115,13 +130,15 @@ listForm.addEventListener('submit', e => {
     lists.push(list);
     selectedListId = list.id;
     listInput.value = null;
-    save();
     addList(list);
     renderBadges();
     showList();
     clearElement(tasksContainer);
     renderTasks(list);
     selectList();
+    showButtons();
+    save();
+    console.log(selectedListId)
 })
 
 addTaskForm.addEventListener('submit', e => {
@@ -130,10 +147,11 @@ addTaskForm.addEventListener('submit', e => {
     const newDescription = newTaskDescription.value.trim();
     if (newTask == null || newTask ==='') return
     const task = createTask(newTask, newDescription);
+    selectedList = lists.find(list => list.id === selectedListId);
     selectedList.tasks.push(task);
-    addTaskForm.submit();
     save();
-      
+    addTaskForm.submit();
+    
 })
 
 function createTask(name, description) {
@@ -151,19 +169,31 @@ function save() {
     localStorage.setItem(LOCAL_STORAGE_SELECTED_LIST_ID_KEY, selectedListId);
 }
 
-function loadList() {
+function hideButtons() {
+    deleters.classList.add('hide');
+    newTaskAddButton.classList.add('hide');
+}
+
+function showButtons() {
+    deleters.classList.remove('hide');
+    newTaskAddButton.classList.remove('hide');
+}
+
+function loadPage() {
     selectedList = lists.find(list => list.id === selectedListId);
+    showButtons();
     lists.forEach(addList)
-    renderTasks(selectedList);
+    selectedListId ? renderTasks(selectedList) : false;
     showList();
     selectList();
     renderBadges();
-    scratchDescription();
 }
 
 function scratchDescription() {
+    selectedList = lists.find(list => list.id === selectedListId);
     selectedList.tasks.forEach(task => {
-        let selectedDescription = document.getElementById(`${task.id}a`)
+        console.log(task)
+        let selectedDescription = document.querySelector(`[data-description-task-id = "${task.id}"]`);
         task.complete === false ? selectedDescription.classList.remove('scratched') : selectedDescription.classList.add('scratched');
     }) 
 }
@@ -175,37 +205,45 @@ function reloadList(e) {
 }
 
 function showList() {
-    selectedList = lists.find(list => list.id === selectedListId);
-    listTitle.innerText = selectedList.name;
-    tasksCounter(selectedList);
+    if (selectedListId) {
+        selectedList = lists.find(list => list.id === selectedListId);
+        listTitle.innerText = selectedList.name;
+        tasksCounter(selectedList);
+    }
 }
 
-function renderTasks(selectedList) {
-    selectedList.tasks.forEach(task => {
-        const taskElement = document.importNode(taskTemplate.content, true)
-        const checkbox = taskElement.querySelector('input');
-        checkbox.id = task.id;
-        checkbox.checked = task.complete;
-        const taskTitle = taskElement.querySelector('.task-title');
-        const taskDescription = taskElement.querySelector('.task-description');
-        const taskDueDate = taskElement.querySelector('.due-date');
-        const taskEditButton = taskElement.querySelector('.edit-task');
-        const deleteTask = taskElement.getElementById('close-x');
-        deleteTask.dataset.typeId = task.id
-        taskEditButton.dataset.typeId = task.id;
-        taskDueDate.append(task.dueDate);
-        taskTitle.htmlFor = task.id;
-        taskTitle.append(task.name);
-        taskDescription.id = task.id + 'a';
-        taskDescription.append(task.description);
-        tasksContainer.appendChild(taskElement);
-    })
+function  renderTasks(selectedList) {
+    selectedList = lists.find(list => list.id === selectedListId)
+    selectedList.tasks.forEach(task => listTasks(task))
+}
+
+function listTasks(task) {
+    const taskElement = document.importNode(taskTemplate.content, true)
+    const checkbox = taskElement.querySelector('input');
+    checkbox.id = task.id;
+    checkbox.checked = task.complete;
+    checkbox.dataset.listId = selectedList.id;
+    const taskTitle = taskElement.querySelector('.task-title');
+    const taskDescription = taskElement.querySelector('.task-description');
+    const taskDueDate = taskElement.querySelector('.due-date');
+    const taskEditButton = taskElement.querySelector('.edit-task');
+    const deleteTask = taskElement.getElementById('close-x');
+    deleteTask.dataset.taskId = task.id
+    deleteTask.dataset.listId = selectedList.id
+    taskEditButton.dataset.taskId = task.id;
+    taskEditButton.dataset.listId = selectedList.id;
+    taskDueDate.append(task.dueDate);
+    taskTitle.htmlFor = task.id;
+    taskTitle.append(task.name);
+    taskDescription.dataset.descriptionTaskId = task.id;
+    taskDescription.append(task.description);
+    tasksContainer.appendChild(taskElement);
 }
 
 function tasksCounter(selectedList) {
     let incomplete = selectedList.tasks.filter(task => !task.complete).length;
     const taskString = incomplete === 1 ? 'task' : 'tasks';
-    incomplete === 0 ? incomplete = 'No': false;
+    incomplete === 0 ? incomplete = 'No' : false;
     listCount.innerText = `${incomplete} incomplete ${taskString}`; 
     const badgeElement = document.querySelector(`[data-sel-id="${selectedListId}"]`);
     incomplete > 0 ?  badgeElement.innerText = `${incomplete}` : badgeElement.innerText = '0';
@@ -235,3 +273,10 @@ function clearElement(e) {
         e.removeChild(e.firstChild)
     }
 }
+
+$('#addModal').on('shown.bs.modal', function() {
+    $(this).find('input:first').focus();
+  });
+  $('#editModal').on('shown.bs.modal', function() {
+    $(this).find('input:first').focus();
+  });
