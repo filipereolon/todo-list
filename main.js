@@ -33,8 +33,6 @@ let selectedTask;
 
 loadPage();
 
-
-
 function selectList() {
     let listItems = document.querySelectorAll('.list');
         listItems.forEach(list => {
@@ -42,6 +40,26 @@ function selectList() {
     })
 }
 
+allTasksFilter.addEventListener('click', () => {
+    let allTaskobject = {id: 1, name: 'all tasks', tasks: []};
+    clearElement(tasksContainer)
+    lists.forEach(list => {
+        list.tasks.forEach(task => {
+            allTaskobject.tasks.push(task);
+        });
+        
+    })
+    
+    console.log(allTaskobject)
+    allTaskobject.tasks.forEach(task => {
+        listTasks(task)
+        let selectedDescription = document.querySelector(`[data-description-task-id = "${task.id}"]`);
+        if (selectedDescription !== null) {
+            console.log('dentro if')            
+            task.complete === false ? selectedDescription.classList.remove('scratched') : selectedDescription.classList.add('scratched');
+        }
+    });
+})
 
 deleteCompletetasks.addEventListener('click', () => {
     clearElement(tasksContainer);
@@ -75,9 +93,10 @@ tasksContainer.addEventListener('click', e => {
 
     if (e.target.tagName.toLowerCase() === 'span') {
         if (e.target.id === 'close-x') {
+            selectedListId = e.target.dataset.listId;
+            selectedList = lists.find(list => list.id === selectedListId);
             selectedList.tasks = selectedList.tasks.filter(task => task.id !== e.target.dataset.taskId);
-            clearElement(tasksContainer);
-            renderTasks(selectedList);
+            e.target.parentNode.parentNode.parentNode.parentNode.removeChild(e.target.parentNode.parentNode.parentNode);
             tasksCounter(selectedList);
             save();
         }
@@ -137,18 +156,18 @@ addTaskForm.addEventListener('submit', e => {
     const newTask = newTaskTitle.value.trim();
     const newDescription = newTaskDescription.value.trim();
     if (newTask == null || newTask ==='') return
-    const task = createTask(newTask, newDescription);
     selectedList = lists.find(list => list.id === selectedListId);
+    const task = createTask(newTask, newDescription, selectedListId);
     selectedList.tasks.push(task);
     save();
     addTaskForm.submit();
     
 })
 
-function createTask(name, description) {
+function createTask(name, description, ListId) {
     let splitDate = newTaskDate.value.split('-');
     let showDate = `${splitDate[2]}/` + `${splitDate[1]}/` + `${splitDate[0]}`;
-    return {id: Date.now().toString(), name, description, complete: false, date: newTaskDate.value, dueDate: showDate}
+    return {id: Date.now().toString(), ListId, name, description, complete: false, date: newTaskDate.value, dueDate: showDate}
 }
 
 function createList(name) {
@@ -214,18 +233,18 @@ function  renderTasks(selectedList) {
 function listTasks(task) {
     const taskElement = document.importNode(taskTemplate.content, true)
     const checkbox = taskElement.querySelector('input');
-    checkbox.id = task.id;
-    checkbox.checked = task.complete;
-    checkbox.dataset.listId = selectedList.id;
     const taskTitle = taskElement.querySelector('.task-title');
     const taskDescription = taskElement.querySelector('.task-description');
     const taskDueDate = taskElement.querySelector('.due-date');
     const taskEditButton = taskElement.querySelector('.edit-task');
     const deleteTask = taskElement.getElementById('close-x');
-    deleteTask.dataset.taskId = task.id
-    deleteTask.dataset.listId = selectedList.id
+    checkbox.id = task.id;
+    checkbox.checked = task.complete;
+    checkbox.dataset.listId = task.ListId;
+    deleteTask.dataset.taskId = task.id;
+    deleteTask.dataset.listId = task.ListId;
     taskEditButton.dataset.taskId = task.id;
-    taskEditButton.dataset.listId = selectedList.id;
+    taskEditButton.dataset.listId = task.ListId;
     taskDueDate.append(task.dueDate);
     taskTitle.htmlFor = task.id;
     taskTitle.append(task.name);
