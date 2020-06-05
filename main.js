@@ -33,12 +33,7 @@ let selectedTask;
 
 loadPage();
 
-function renderBadges() {
-    lists.forEach(list => {
-        selectedListId = list.id;
-        tasksCounter(list);
-    })
-}
+
 
 function selectList() {
     let listItems = document.querySelectorAll('.list');
@@ -64,7 +59,6 @@ tasksContainer.addEventListener('click', e => {
     if (e.target.tagName.toLowerCase() === 'input') {
         selectedListId = e.target.dataset.listId;
         selectedList = lists.find(list => list.id === selectedListId);
-        
         selectedTaskId = e.target.id;
         selectedTask = selectedList.tasks.find(task => task.id === selectedTaskId)
         let selectedDescription = document.querySelector(`[data-description-task-id = "${selectedTaskId}"]`);
@@ -75,9 +69,8 @@ tasksContainer.addEventListener('click', e => {
             selectedTask.complete = true;
             selectedDescription.classList.add('scratched');
         }
-        save();
         tasksCounter(selectedList);
-        renderBadges();
+        save();
     }
 
     if (e.target.tagName.toLowerCase() === 'span') {
@@ -115,10 +108,10 @@ listContainer.addEventListener('click', e => {
         selectedListId = e.target.id;
         selectList();
         showList();
-        save();
         clearElement(tasksContainer);
         renderTasks(selectedList);
         scratchDescription();
+        save();
     }
 })
 
@@ -131,14 +124,12 @@ listForm.addEventListener('submit', e => {
     selectedListId = list.id;
     listInput.value = null;
     addList(list);
-    renderBadges();
     showList();
     clearElement(tasksContainer);
     renderTasks(list);
     selectList();
     showButtons();
     save();
-    console.log(selectedListId)
 })
 
 addTaskForm.addEventListener('submit', e => {
@@ -187,14 +178,17 @@ function loadPage() {
     showList();
     selectList();
     renderBadges();
+    selectedListId ? scratchDescription() : false;
 }
 
 function scratchDescription() {
     selectedList = lists.find(list => list.id === selectedListId);
+    
     selectedList.tasks.forEach(task => {
-        console.log(task)
-        let selectedDescription = document.querySelector(`[data-description-task-id = "${task.id}"]`);
-        task.complete === false ? selectedDescription.classList.remove('scratched') : selectedDescription.classList.add('scratched');
+    let selectedDescription = document.querySelector(`[data-description-task-id = "${task.id}"]`);
+        if (selectedDescription !== null) {            
+            task.complete === false ? selectedDescription.classList.remove('scratched') : selectedDescription.classList.add('scratched');
+        }
     }) 
 }
 
@@ -247,6 +241,14 @@ function tasksCounter(selectedList) {
     listCount.innerText = `${incomplete} incomplete ${taskString}`; 
     const badgeElement = document.querySelector(`[data-sel-id="${selectedListId}"]`);
     incomplete > 0 ?  badgeElement.innerText = `${incomplete}` : badgeElement.innerText = '0';
+}
+
+function renderBadges() {
+    lists.forEach(list => {
+        selectedListId = list.id;
+        tasksCounter(list);
+    })
+    selectedListId = localStorage.getItem(LOCAL_STORAGE_SELECTED_LIST_ID_KEY);
 }
 
 function addList(list) {
