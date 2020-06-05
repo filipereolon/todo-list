@@ -152,6 +152,10 @@ input {outline: none;}
     margin: 5px;
 }
 
+.btn.disabled:hover {
+    cursor: not-allowed;
+}
+
 .deleters {
     display: flex;
     justify-content: flex-start;
