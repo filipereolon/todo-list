@@ -21,6 +21,7 @@ const deleteCompletetasks = document.getElementById('delete-complete-task-button
 const allTasksFilter = document.getElementById('all-tasks');
 const deleters = document.querySelector('.deleters');
 const newTaskAddButton = document.getElementById('add-new-task-button');
+const submitNewTaskButton = document.getElementById('add-task-button');
 
 const LOCAL_STORAGE_LIST_KEY = 'task.lists';
 const LOCAL_STORAGE_SELECTED_LIST_ID_KEY = 'task.selectedListId';
@@ -101,6 +102,8 @@ tasksContainer.addEventListener('click', e => {
             save();
         }
         if (e.target.classList.contains('edit-task')) {
+            selectedListId = selectedListId = e.target.dataset.listId;
+            selectedList = lists.find(list => list.id === selectedListId);
             selectedTaskId = e.target.dataset.taskId;
             selectedTask = selectedList.tasks.find(task => task.id === selectedTaskId);
             editTaskDate.value = selectedTask.date;
@@ -115,7 +118,6 @@ editTaskButton.addEventListener('click', () => {
     selectedTask.description = editTaskDescription.value;
     selectedTask.complete = false;
     editTaskTitle.value.trim() === '' ? false : selectedTask.name = editTaskTitle.value;
-    
     clearElement(tasksContainer);
     renderTasks(selectedList);
     tasksCounter(selectedList);
@@ -151,17 +153,47 @@ listForm.addEventListener('submit', e => {
     save();
 })
 
-addTaskForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const newTask = newTaskTitle.value.trim();
-    const newDescription = newTaskDescription.value.trim();
-    if (newTask == null || newTask ==='') return
-    selectedList = lists.find(list => list.id === selectedListId);
-    const task = createTask(newTask, newDescription, selectedListId);
-    selectedList.tasks.push(task);
-    save();
-    addTaskForm.submit();
-    
+newTaskAddButton.addEventListener('click', () => {
+    submitNewTaskButton.classList.add('disabled');
+    newTaskTitle.value = null;
+    newTaskDescription.value = null;
+    newTaskDate.value = null;
+})
+
+addTaskForm.addEventListener('keydown', () => {
+    if (newTaskTitle.value.trim().length > 0) {
+        submitNewTaskButton.classList.remove('disabled');
+        submitNewTaskButton.dataset.dismiss = 'modal'
+    } else {
+        submitNewTaskButton.classList.add('disabled');
+        submitNewTaskButton.dataset.dismiss = 'not-modal'
+    }
+})
+
+addTaskForm.addEventListener('click', () => {
+    if (newTaskTitle.value.trim().length > 0) {
+        submitNewTaskButton.classList.remove('disabled');
+        submitNewTaskButton.dataset.dismiss = 'modal'
+    } else {
+        submitNewTaskButton.classList.add('disabled');
+        submitNewTaskButton.dataset.dismiss = 'not-modal'
+    }
+})
+
+submitNewTaskButton.addEventListener('click', () => {
+    if (submitNewTaskButton.classList.contains('disabled')) {
+       return 
+    } else {
+        const newTask = newTaskTitle.value.trim();
+        const newDescription = newTaskDescription.value.trim();
+        selectedList = lists.find(list => list.id === selectedListId);
+        const task = createTask(newTask, newDescription, selectedListId);
+        selectedList.tasks.push(task);
+        clearElement(tasksContainer);
+        tasksCounter(selectedList);
+        renderTasks(selectedList);
+        save();
+    }
 })
 
 function createTask(name, description, ListId) {
