@@ -55,6 +55,14 @@ function unselectFilters() {
 
 allTasksFilter.addEventListener('click', renderAllTasks)
 
+function sortByDate(list) {
+    list.tasks = list.tasks.sort((a, b) => {
+        return b.date < a.date ? 1
+            : b.date > a.date ? -1
+            : 0;
+    })
+}
+
 function renderAllTasks() {
     let allTaskobject = {id: 1, name: 'all tasks', tasks: []};
     isFilterSelected = 1;
@@ -65,6 +73,8 @@ function renderAllTasks() {
         });
         
     })
+
+    sortByDate(allTaskobject);
     allTaskobject.tasks.forEach(task => {
         listTasks(task)
         let selectedDescription = document.querySelector(`[data-description-task-id = "${task.id}"]`);
@@ -73,10 +83,8 @@ function renderAllTasks() {
             task.complete === false ? selectedTaskList.classList.remove('scratched') : selectedTaskList.classList.add('scratched');    
             task.complete === false ? selectedDescription.classList.remove('scratched') : selectedDescription.classList.add('scratched');
         }
-        selectedListId = task.ListId;
-        selectedList = lists.find(list => list.id === selectedListId);
-        selectedTaskList.innerText = '- ' + selectedList.name;
-
+        selectedList = lists.find(list => list.id === task.ListId);
+        selectedTaskList.innerText = '-' + selectedList.name;
     });
     
     let incomplete = allTaskobject.tasks.filter(task => !task.complete).length;
@@ -223,6 +231,7 @@ submitNewTaskButton.addEventListener('click', () => {
         clearElement(tasksContainer);
         tasksCounter(selectedList);
         renderTasks(selectedList);
+        renderBadges();
         save();
     }
 })
@@ -310,6 +319,7 @@ function showList() {
 
 function  renderTasks(selectedList) {
     selectedList = lists.find(list => list.id === selectedListId)
+    sortByDate(selectedList);
     selectedList.tasks.forEach(task => listTasks(task))
 }
 
