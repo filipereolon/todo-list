@@ -25,8 +25,7 @@ header {
     gap: 10px;
     margin: 10px;
     grid-template-columns: 1fr 3fr;
-    grid-template-rows: 80vh;
-    margin-left: 15vw;
+    grid-template-rows: 1fr;
 }
 
 .filters {
@@ -43,6 +42,10 @@ header {
     list-style: none;
 }
 
+.lists {
+    padding: 5px;
+}
+
 .list-name:hover {
     cursor: pointer;
 }
@@ -50,6 +53,12 @@ header {
 .list {
     display: flex;
     align-items: center;
+}
+
+.list-title {
+    margin: 0 0 0 10px;
+    font-size: small;
+    font-style: italic;
 }
 
 .list span {
@@ -66,6 +75,7 @@ header {
 
 .sidebar {
     border: solid;
+    min-width: 150px;
 }
 
 #add-list-form {
@@ -73,8 +83,16 @@ header {
     margin: 0 5px;
 }
 
-.selected {
+#add-list-input {
+    width: 60%;
+}
+
+.list.selected {
     font-weight: bolder;
+    color: red;
+}
+
+.filter.selected {
     color: red;
 }
 
@@ -84,10 +102,6 @@ header {
     justify-content: space-between;
     border-radius: 5px;
     padding: 6px;
-}
-
-#tasks-view {
-    max-width: 40vw;
 }
 
 #todo-counter {
@@ -110,6 +124,10 @@ header {
     width: 100%;
 }
 
+#tasks-view {
+    border: solid black;
+}
+
 input[type=checkbox]:checked + label.task-title{
     text-decoration: line-through;
     opacity: 0.5;
@@ -128,7 +146,8 @@ input {outline: none;}
 }
 
 .task-title {
-    margin: 2px 0 4px 6px;
+    padding: 2px 0 4px 6px;
+    margin: 0;
     font-size: large;
     font-weight: bold;
 }
@@ -144,6 +163,7 @@ input {outline: none;}
 
 .checkbox-and-title {
     display: flex;
+    align-items: center;
 }
 
 .new-task {
