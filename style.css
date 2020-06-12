@@ -81,10 +81,11 @@ header {
 #add-list-form {
     display: flex;
     margin: 0 5px;
+    justify-content: space-between;
 }
 
 #add-list-input {
-    width: 60%;
+    width: 70%;
 }
 
 .list.selected {

@@ -22,6 +22,7 @@ const allTasksFilter = document.getElementById('all-tasks');
 const deleters = document.querySelector('.deleters');
 const newTaskAddButton = document.getElementById('add-new-task-button');
 const submitNewTaskButton = document.getElementById('add-task-button');
+const todayFilter = document.getElementById('today');
 
 const LOCAL_STORAGE_LIST_KEY = 'task.lists';
 const LOCAL_STORAGE_SELECTED_LIST_ID_KEY = 'task.selectedListId';
@@ -55,7 +56,12 @@ function unselectFilters() {
     filterItems.forEach(filter => filter.classList.remove('selected'));
 }
 
-allTasksFilter.addEventListener('click', renderAllTasks)
+function selectFilter() {
+    let filterItems = document.querySelectorAll('.filter');
+    filterItems.forEach(filter => {
+        filter.dataset.id === isFilterSelected ? filter.classList.add('selected') : filter.classList.remove('selected');
+    })
+}
 
 function sortByDate(list) {
     list.tasks = list.tasks.sort((a, b) => {
@@ -65,19 +71,12 @@ function sortByDate(list) {
     })
 }
 
-function renderAllTasks() {
-    let allTaskobject = {id: 1, name: 'all tasks', tasks: []};
-    isFilterSelected = 1;
-    clearElement(tasksContainer)
-    lists.forEach(list => {
-        list.tasks.forEach(task => {
-            allTaskobject.tasks.push(task);
-        });
-        
-    })
+allTasksFilter.addEventListener('click', renderAllTasks)
 
-    sortByDate(allTaskobject);
-    allTaskobject.tasks.forEach(task => {
+todayFilter.addEventListener('click', renderTodayTasks)
+
+function renderFilterTasks(filterObject) {
+    filterObject.tasks.forEach(task => {
         listTasks(task)
         let selectedDescription = document.querySelector(`[data-description-task-id = "${task.id}"]`);
         let selectedTaskList = document.querySelector(`[data-task-id-div = "${task.id}"]`);
@@ -88,12 +87,46 @@ function renderAllTasks() {
         selectedList = lists.find(list => list.id === task.ListId);
         selectedTaskList.innerText = '-' + selectedList.name;
     });
-    
-    let incomplete = allTaskobject.tasks.filter(task => !task.complete).length;
+    let incomplete = filterObject.tasks.filter(task => !task.complete).length;
     const taskString = incomplete === 1 ? 'task' : 'tasks';
     incomplete === 0 ? incomplete = 'No' : false;
-    listCount.innerText = `${incomplete} incomplete ${taskString}`; 
+    listCount.innerText = `${incomplete} incomplete ${taskString}`;
+}
 
+function renderTodayTasks() {
+    selectFilter();
+    let date = new Date();
+    let dateNow = `${date.getFullYear()}-${('0' + (date.getMonth()+1)   ).slice(-2)}-${("0" + date.getDate()).slice(-2)}`;
+    let todayObject = {id: 2, name: 'all tasks', tasks: []};
+    isFilterSelected = 2;
+    clearElement(tasksContainer)
+    lists.forEach(list => {
+        list.tasks.forEach(task => {
+            todayObject.tasks.push(task);
+        });
+    })
+    todayObject.tasks = todayObject.tasks.filter(task => task.date === dateNow)
+    renderFilterTasks(todayObject);     
+    todayFilter.classList.add('selected');
+    listTitle.innerText = "Today's Tasks";
+    unselectLists();
+    hideButtons();
+    save();
+}
+
+
+function renderAllTasks() {
+    selectFilter();
+    let allTaskobject = {id: 1, name: 'all tasks', tasks: []};
+    isFilterSelected = 1;
+    clearElement(tasksContainer)
+    lists.forEach(list => {
+        list.tasks.forEach(task => {
+            allTaskobject.tasks.push(task);
+        });
+    })
+    sortByDate(allTaskobject);
+    renderFilterTasks(allTaskobject);
     allTasksFilter.classList.add('selected');
     listTitle.innerText = 'All Tasks';
     unselectLists();
@@ -127,7 +160,16 @@ tasksContainer.addEventListener('click', e => {
             selectedTask.complete = true;
             selectedDescription.classList.add('scratched');
         }
-        isFilterSelected === 1 ? renderAllTasks() : tasksCounter(selectedList);
+        switch(isFilterSelected) {
+            case 1:
+                renderAllTasks();
+                break;
+            case 2:
+                renderTodayTasks();
+                break;
+            default:
+                tasksCounter(selectedList);
+        }
         renderBadges();
         save();
     }
@@ -190,10 +232,9 @@ listForm.addEventListener('submit', e => {
     showList();
     clearElement(tasksContainer);
     renderTasks(list);
-    renderBadges();
-    
     showButtons();
     save();
+    renderBadges();
 })
 
 newTaskAddButton.addEventListener('click', () => {
@@ -274,8 +315,16 @@ function loadPage() {
         case 1:
             loadPageOnAllTasks();
             break;
-            
+        case 2:
+            loadPageOnTodayTasks();
+            break;            
     }
+}
+
+function loadPageOnTodayTasks() {
+    renderTodayTasks();
+    lists.forEach(addList);
+    renderBadges();
 }
 
 function loadPageOnAllTasks() {
@@ -384,7 +433,10 @@ function addList(list) {
 
 deleteListBtn.addEventListener('click', () => {
     lists = lists.filter(list => list.id !== selectedListId);
+    clearElement(listContainer)
+    lists.forEach(addList)
     renderAllTasks();
+    renderBadges();
     save();
 })
 

@@ -13,12 +13,12 @@
     <div class="cont">
         <div class="sidebar">
             <ul class="filters">
-                <li id="all-tasks" class="filter allTasks">
+                <li id="all-tasks" data-id="1" class="filter allTasks">
                     <img src="icon-todo.png" alt="" class="icons">
                     <span class="list-name">All Tasks</span>
                     <span class="tasks-count"></span>
                 </li>
-                <li class="filter today">
+                <li id="today" data-id="2" class="filter">
                     <img src="icon-todo.png" alt="" class="icons">
                     <span class="list-name">Today</span>
                     <span class="tasks-count"></span>   
@@ -37,7 +37,7 @@
             <ul class="lists"></ul>
             <form id="add-list-form">
                 <input id="add-list-input" type="text" placeholder="+ Add List">
-                <input class="btn btn-light add-list-button" type="submit" value="Add">
+                <input class="btn p-1 btn-light add-list-button" type="submit" value="Add">
             </form>    
 
         </div>
