@@ -32,7 +32,9 @@ let selectedListId = localStorage.getItem(LOCAL_STORAGE_SELECTED_LIST_ID_KEY);
 
 let selectedList;
 let selectedTask;
-let isFilterSelected = parseInt(localStorage.getItem(LOCAL_STORAGE_ISFILTERSELECTED)) || 0;
+let isFilterSelected = parseInt(localStorage.getItem(LOCAL_STORAGE_ISFILTERSELECTED));
+
+isNaN(isFilterSelected) ? isFilterSelected = 1 : false;
 
 loadPage();
 
@@ -184,10 +186,12 @@ listForm.addEventListener('submit', e => {
     selectedListId = list.id;
     listInput.value = null;
     addList(list);
+    selectList();
     showList();
     clearElement(tasksContainer);
     renderTasks(list);
-    selectList();
+    renderBadges();
+    
     showButtons();
     save();
 })
