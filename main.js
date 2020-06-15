@@ -24,6 +24,7 @@ const newTaskAddButton = document.getElementById('add-new-task-button');
 const submitNewTaskButton = document.getElementById('add-task-button');
 const todayFilter = document.getElementById('today');
 const thisWeekFilter = document.querySelector('.next-week');
+const priorityInput = document.getElementById('priority');
 
 const LOCAL_STORAGE_LIST_KEY = 'task.lists';
 const LOCAL_STORAGE_SELECTED_LIST_ID_KEY = 'task.selectedListId';
@@ -194,6 +195,9 @@ tasksContainer.addEventListener('click', e => {
             case 2:
                 renderTodayTasks();
                 break;
+            case 3:
+                renderThisWeekTasks();
+                break;
             default:
                 tasksCounter(selectedList);
         }
@@ -208,6 +212,7 @@ tasksContainer.addEventListener('click', e => {
             selectedList.tasks = selectedList.tasks.filter(task => task.id !== e.target.dataset.taskId);
             e.target.parentNode.parentNode.parentNode.parentNode.removeChild(e.target.parentNode.parentNode.parentNode);
             tasksCounter(selectedList);
+            renderBadges();
             save();
         }
         if (e.target.classList.contains('edit-task')) {
@@ -284,6 +289,7 @@ newTaskAddButton.addEventListener('click', () => {
     newTaskTitle.value = null;
     newTaskDescription.value = null;
     newTaskDate.value = null;
+    priorityInput.value = 'none';
 })
 
 addTaskForm.addEventListener('keydown', () => {
@@ -312,8 +318,9 @@ submitNewTaskButton.addEventListener('click', () => {
     } else {
         const newTask = newTaskTitle.value.trim();
         const newDescription = newTaskDescription.value.trim();
+        const priority = priorityInput.value;
         selectedList = lists.find(list => list.id === selectedListId);
-        const task = createTask(newTask, newDescription, selectedListId);
+        const task = createTask(newTask, newDescription, selectedListId, priority);
         selectedList.tasks.push(task);
         clearElement(tasksContainer);
         tasksCounter(selectedList);
@@ -323,10 +330,10 @@ submitNewTaskButton.addEventListener('click', () => {
     }
 })
 
-function createTask(name, description, ListId) {
+function createTask(name, description, ListId, priority) {
     let splitDate = newTaskDate.value.split('-');
     let showDate = `${splitDate[2]}/` + `${splitDate[1]}/` + `${splitDate[0]}`;
-    return {id: Date.now().toString(), ListId, name, description, complete: false, date: newTaskDate.value, dueDate: showDate}
+    return {id: Date.now().toString(), ListId, name, description, complete: false, date: newTaskDate.value, dueDate: showDate, priority}
 }
 
 function createList(name) {
@@ -443,7 +450,11 @@ function listTasks(task) {
 
     taskDate < dateToday ? (taskDate.getFullYear() === dateToday.getFullYear() && taskDate.getMonth()
     === dateToday.getMonth() && taskDate.getDate() === dateToday.getDate()) ?
-    false : taskWrapper.style.backgroundColor = 'red' : false;
+    false : taskWrapper.classList.add('expired') : false;
+
+    task.priority === 'Low' ? taskWrapper.classList.add('low') :
+    task.priority === 'Medium' ? taskWrapper.classList.add('medium') :
+    task.priority === 'High' ? taskWrapper.classList.add('high') : false
 
     listTitleDiv.dataset.taskIdDiv = task.id;
     checkbox.id = task.id;

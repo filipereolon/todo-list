@@ -16,24 +16,17 @@
                 <li id="all-tasks" data-id="1" class="filter allTasks">
                     <img src="icon-todo.png" alt="" class="icons">
                     <span class="list-name">All Tasks</span>
-                    <span class="tasks-count"></span>
                 </li>
-                <li id="today" data-id="2" class="filter">
-                    <img src="icon-todo.png" alt="" class="icons">
+                <li id="today" data-id="2" class="filter today">
+                    <img src="sun.svg" alt="" class="icons">
                     <span class="list-name">Today</span>
-                    <span class="tasks-count"></span>   
                 </li>
                 <li data-id="3" class="filter next-week">
-                    <img src="icon-todo.png" alt="" class="icons">
+                    <img src="week.png" alt="" class="icons">
                     <span class="list-name">Next Week</span>
-                    <span class="tasks-count"></span>
-                </li>
-                <li data-id="4" class="filter important">
-                    <img src="icon-todo.png" alt="" class="icons">
-                    <span class="list-name">Important</span>
-                    <span class="tasks-count"></span>
                 </li>
             </ul>
+            <h4>My Lists</h4>
             <ul class="lists"></ul>
             <form id="add-list-form">
                 <input id="add-list-input" type="text" placeholder="+ Add List">
@@ -70,6 +63,12 @@
                         <input class="modal-inputs" type="text" placeholder="Title" id="new-task-title">
                         <textarea class="modal-inputs" placeholder="Description..." id="new-task-description"></textarea>
                         <input type="date" id="date-picker" class="modal-inputs">
+                        <select class="form-control form-control-sm" name="priority" id="priority">
+                            <option value="none" selected disabled hidden>Priority</option>
+                            <option value="Low" >Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
                     </form> 
                 </div>
                 <div class="modal-footer">

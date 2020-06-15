@@ -17,6 +17,7 @@ header {
     font-weight: bolder;
     font-size: xx-large;
     background-color: rgb(68, 145, 218);
+    margin-bottom: .5rem;
 }
 
 .cont  {
@@ -46,6 +47,10 @@ header {
     padding: 5px;
 }
 
+.list-name {
+    font-size: large;
+}
+
 .list-name:hover {
     cursor: pointer;
 }
@@ -53,6 +58,8 @@ header {
 .list {
     display: flex;
     align-items: center;
+    padding: 2px 9px;
+    justify-content: space-evenly;
 }
 
 .list-title {
@@ -69,12 +76,7 @@ header {
     cursor: pointer;
 }
 
-.tasks-view {
-    border: solid;
-}
-
 .sidebar {
-    border: solid;
     min-width: 150px;
 }
 
@@ -89,20 +91,42 @@ header {
 }
 
 .list.selected {
+    color: rgb(172, 0, 0);
+    background-color: rgba(0, 122, 41, 0.3);
+    border-radius: 10px;
     font-weight: bolder;
-    color: red;
 }
 
 .filter.selected {
-    color: red;
+    color: rgb(172, 0, 0);
+    border-radius: 10px;
+}
+
+.filter.selected.allTasks {
+    background-color: rgb(68, 145, 218,.2);
+}
+
+.filter.selected.today {
+    background-color: rgba(255, 217, 0, 0.3);
+}
+
+.filter.selected.next-week {
+    background-color: rgba(36, 119, 54, 0.2);
+}
+
+.filter {
+    display: flex;
+    align-items: center;
+    padding: 3px;
 }
 
 .todo-header {
     display: flex;
-    background-color:rgb(163, 181, 199);
+    background-color:rgb(163, 181, 199, 0.6);
     justify-content: space-between;
-    border-radius: 5px;
+    border-radius: 10px;
     padding: 6px;
+    border: rgba(0,0,0,0.4) solid 1px;
 }
 
 #todo-counter {
@@ -112,21 +136,22 @@ header {
 
 #todo-title {
     font-size: x-large;
+    font-weight: bolder;
 }
 
 .task {
     display: flex;
     flex-wrap: wrap;
-    border-radius: 5%;
+    border-radius: 10px;
     padding: 10px;
+    margin: .3rem 0;
+    border: rgba(0,0,0,0.4) solid 1px;
 }
+
+
 
 .task-description {
     width: 100%;
-}
-
-#tasks-view {
-    border: solid black;
 }
 
 input[type=checkbox]:checked + label.task-title{
@@ -170,7 +195,7 @@ input {outline: none;}
 .new-task {
     display: flex;
     justify-content: flex-start;
-    margin: 5px;
+    margin: 5px 0 0 0;
 }
 
 .btn.disabled:hover {
@@ -180,7 +205,7 @@ input {outline: none;}
 .deleters {
     display: flex;
     justify-content: flex-start;
-    margin: 5px;
+    margin: 0;
     flex-wrap: wrap;
 }
 
@@ -197,7 +222,7 @@ input {outline: none;}
 
 #add-tasks {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
 }
 
 #edit-tasks {
@@ -205,8 +230,13 @@ input {outline: none;}
     flex-direction: column;
 }
 
+#new-task-title {
+    flex: 0 0 100%;
+}
+
 #new-task-description {
     resize: none;
+    flex: 0 0 100%;
 }
 
 #edit-task-description {
@@ -229,4 +259,30 @@ input {outline: none;}
 .date-edit-delete {
     display: flex;
     margin-left: 4px;
+}
+
+#date-picker {
+    flex: 0 0 30%;
+    margin: 1rem 1rem 0 auto;
+}
+
+#priority {
+    flex: 0 0 30%;
+    margin: 1rem auto 0 1rem;
+}
+
+.task.low {
+    background-color: rgb(10, 228, 10, 0.3);
+}
+
+.task.medium {
+    background-color: rgba(252, 255, 67, 0.452); 
+}
+
+.task.high {
+    background-color: rgba(255, 0, 0, 0.2);
+}
+
+.task.expired {
+    background-color: rgba(255, 0, 0, 0.7);
 }
