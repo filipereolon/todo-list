@@ -421,7 +421,7 @@ function showList() {
     }
 }
 
-function  renderTasks(selectedList) {
+function renderTasks(selectedList) {
     selectedList = lists.find(list => list.id === selectedListId)
     sortByDate(selectedList);
     selectedList.tasks.forEach(task => listTasks(task))
@@ -429,6 +429,7 @@ function  renderTasks(selectedList) {
 
 function listTasks(task) {
     const taskElement = document.importNode(taskTemplate.content, true)
+    const taskWrapper = taskElement.querySelector('.task');
     const checkbox = taskElement.querySelector('input');
     const taskTitle = taskElement.querySelector('.task-title');
     const taskDescription = taskElement.querySelector('.task-description');
@@ -436,6 +437,14 @@ function listTasks(task) {
     const taskEditButton = taskElement.querySelector('.edit-task');
     const deleteTask = taskElement.getElementById('close-x');
     const listTitleDiv = taskElement.querySelector('.list-title');
+    let taskDateArray = task.date.split('-');
+    let taskDate = new Date(taskDateArray[0], taskDateArray[1]-1, taskDateArray[2]);
+    let dateToday = new Date();
+
+    taskDate < dateToday ? (taskDate.getFullYear() === dateToday.getFullYear() && taskDate.getMonth()
+    === dateToday.getMonth() && taskDate.getDate() === dateToday.getDate()) ?
+    false : taskWrapper.style.backgroundColor = 'red' : false;
+
     listTitleDiv.dataset.taskIdDiv = task.id;
     checkbox.id = task.id;
     checkbox.checked = task.complete;
