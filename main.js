@@ -23,6 +23,7 @@ const deleters = document.querySelector('.deleters');
 const newTaskAddButton = document.getElementById('add-new-task-button');
 const submitNewTaskButton = document.getElementById('add-task-button');
 const todayFilter = document.getElementById('today');
+const thisWeekFilter = document.querySelector('.next-week');
 
 const LOCAL_STORAGE_LIST_KEY = 'task.lists';
 const LOCAL_STORAGE_SELECTED_LIST_ID_KEY = 'task.selectedListId';
@@ -75,6 +76,8 @@ allTasksFilter.addEventListener('click', renderAllTasks)
 
 todayFilter.addEventListener('click', renderTodayTasks)
 
+thisWeekFilter.addEventListener('click', renderThisWeekTasks)
+
 function renderFilterTasks(filterObject) {
     filterObject.tasks.forEach(task => {
         listTasks(task)
@@ -91,6 +94,30 @@ function renderFilterTasks(filterObject) {
     const taskString = incomplete === 1 ? 'task' : 'tasks';
     incomplete === 0 ? incomplete = 'No' : false;
     listCount.innerText = `${incomplete} incomplete ${taskString}`;
+}
+
+function renderThisWeekTasks() {
+    selectFilter();
+    isFilterSelected = 3;
+    let dateLimit = new Date();
+    dateLimit.setDate(dateLimit.getDate()+7);
+    let thisWeekObject = {id: 3, name: 'this week', tasks: []};
+    clearElement(tasksContainer)
+    lists.forEach(list => {
+        list.tasks.forEach(task => {
+            let taskDateArray = task.date.split('-');
+            let taskDate = new Date(taskDateArray[0], taskDateArray[1]-1, taskDateArray[2]);
+            taskDate < dateLimit ? thisWeekObject.tasks.push(task) : false;        
+        })
+    })
+    sortByDate(thisWeekObject);
+    renderFilterTasks(thisWeekObject);
+    thisWeekFilter.classList.add('selected');
+    listTitle.innerText = 'Next Week';
+    unselectLists();
+    hideButtons();
+    save();
+
 }
 
 function renderTodayTasks() {
@@ -196,11 +223,26 @@ tasksContainer.addEventListener('click', e => {
 })
 
 editTaskButton.addEventListener('click', () => {
+    let splitDate = editTaskDate.value.split('-');
+    let showDate = `${splitDate[2]}/` + `${splitDate[1]}/` + `${splitDate[0]}`;
+    selectedTask.dueDate = showDate;
     selectedTask.date = editTaskDate.value;
     selectedTask.description = editTaskDescription.value;
     editTaskTitle.value.trim() === '' ? false : selectedTask.name = editTaskTitle.value;
     clearElement(tasksContainer);
-    isFilterSelected === 1 ? renderAllTasks() : renderTasks(selectedList);
+    switch(isFilterSelected) {
+        case 1:
+            renderAllTasks();
+            break;
+        case 2:
+            renderTodayTasks();
+            break;
+        case 3:
+            renderThisWeekTasks();
+            break;
+        default:
+            renderTasks(selectedList)
+    }
     save();
 })
 
@@ -317,8 +359,17 @@ function loadPage() {
             break;
         case 2:
             loadPageOnTodayTasks();
-            break;            
+            break;
+        case 3:
+            loadPageOnThisWeekTasks();
+            break;          
     }
+}
+
+function loadPageOnThisWeekTasks() {
+    renderThisWeekTasks();
+    lists.forEach(addList);
+    renderBadges();
 }
 
 function loadPageOnTodayTasks() {
